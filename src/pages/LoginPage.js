@@ -3,29 +3,28 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { auth } from '../firebase'; // Firebase auth import
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth(); // AuthContext from here
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      // Firebase SDK ile oturum açma işlemi
-      await login(email, password);
+      // Backend API'ye istek gönder
+      const response = await axios.post('http://localhost:3001/auth/login', { email, password });
 
-      // Oturum açma sonrası Firebase'den token alma
-      const idToken = await auth.currentUser.getIdToken(true);
+      // Başarılı login sonrası kullanıcının verisini ve token'ı sakla
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      login(user);
 
-      // Backend'e giriş isteği gönder ve token al (Backend'in CORS politikalarının uygun olduğundan emin olun)
-      const response = await axios.post('http://localhost:3001/auth/login', { email, password, idToken });
-
-      alert('Giriş başarılı');
-      navigate('/dashboard'); // Successful login redirects to the dashboard
+      // Kullanıcıyı başarılı giriş sonrası Dashboard sayfasına yönlendir
+      navigate('/dashboard');
+      window.location.reload();
     } catch (error) {
       console.error('Giriş sırasında bir hata oluştu:', error);
       alert('Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.');

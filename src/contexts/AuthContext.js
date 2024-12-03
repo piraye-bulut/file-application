@@ -1,8 +1,5 @@
-// src/contexts/AuthContext.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth, db } from '../firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -15,37 +12,36 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setCurrentUser(user);
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.get('http://localhost:3001/auth/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(response => {
+        setCurrentUser(response.data);
+        setLoading(false);
+      })
+      .catch(() => {
+        localStorage.removeItem('token');
+        setCurrentUser(null);
+        setLoading(false);
+      });
+    } else {
       setLoading(false);
-      if (user) {
-        const userRef = doc(db, 'users', user.uid);
-        await setDoc(userRef, {
-          uid: user.uid,
-          email: user.email,
-        }, { merge: true });
-      }
-    });
-
-    return unsubscribe;
+    }
   }, []);
 
-  const signup = async (email, password) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await setDoc(doc(db, 'users', userCredential.user.uid), {
-      uid: userCredential.user.uid,
-      email: userCredential.user.email,
-    });
-    return userCredential;
+  const signup = async (user) => {
+    setCurrentUser(user);
   };
 
-  const login = async (email, password) => {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential;
+  const login = async (user) => {
+    setCurrentUser(user);
   };
 
   const logout = () => {
-    return signOut(auth);
+    localStorage.removeItem('token');
+    setCurrentUser(null);
   };
 
   const value = {

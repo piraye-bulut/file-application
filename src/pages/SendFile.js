@@ -1,8 +1,6 @@
-// src/pages/SendFile.js
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { db } from '../firebase';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import axios from 'axios';
 
 export const SendFile = () => {
   const [recipientEmail, setRecipientEmail] = useState('');
@@ -12,7 +10,13 @@ export const SendFile = () => {
   const { currentUser } = useAuth();
 
   const validateFile = (file) => {
-    const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+    const validTypes = [
+      'image/jpeg', 
+      'image/png', 
+      'application/pdf', 
+      'application/msword', // .doc MIME türü
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // .docx MIME türü
+    ];
     const maxSize = 1024 * 1024 * 10; // 10MB
 
     if (!validTypes.includes(file.type)) {
@@ -26,14 +30,19 @@ export const SendFile = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    validateFile(file); // Dosya doğrulaması
-    setFile(file);
+    try {
+      validateFile(file); // Dosya doğrulaması
+      setFile(file);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setFileBase64(reader.result);
-    };
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        setFileBase64(reader.result);
+      };
+    } catch (error) {
+      console.error(error.message);
+      alert(error.message);
+    }
   };
 
   const handleUpload = async (e) => {
@@ -43,19 +52,11 @@ export const SendFile = () => {
     setUploading(true);
 
     try {
-      const recipientSnapshot = await getDocs(query(collection(db, 'users'), where('email', '==', recipientEmail)));
-      if (recipientSnapshot.empty) {
-        alert('Bu e-posta adresine sahip kullanıcı bulunamadı.');
-        setUploading(false);
-        return;
-      }
-
-      await addDoc(collection(db, 'files'), {
+      const response = await axios.post('http://localhost:3001/files', {
         recipientEmail,
         senderEmail: currentUser.email,
         fileName: file.name,
         fileBase64,
-        timestamp: new Date(),
       });
 
       alert('Dosya başarıyla gönderildi!');

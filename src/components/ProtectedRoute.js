@@ -1,20 +1,15 @@
-// src/components/ProtectedRoute.js
-
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { auth } from '../firebase'; // Firebase yapılandırmanızı içe aktarın
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-// Kullanıcı doğrulamasına dayalı olarak bileşenleri yöneten ProtectedRoute fonksiyonu
-export const ProtectedRoute = () => {
-  const user = auth.currentUser;
+export const ProtectedRoute = ({ children }) => {
+  const { currentUser } = useAuth();
 
-  // Kullanıcı yoksa, giriş sayfasına yönlendir
-  if (!user) {
+  if (!currentUser) {
     return <Navigate to="/login" />;
   }
 
-  // Kullanıcı varsa, bileşeni render et
-  return <Outlet />;
+  return children;
 };
 
 export default ProtectedRoute;

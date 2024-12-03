@@ -1,5 +1,5 @@
 export {Home} from "./Home";
-export {Signup} from "./signup";
+export {Signup} from "./Signup";
 export {LoginPage} from "./LoginPage";
 export {Dashboard} from "./Dashboard";
 export {SendFile} from "./SendFile";

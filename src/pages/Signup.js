@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';  // AuthContext here
+import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { auth } from '../firebase'; // Firebase auth import
 
 export const Signup = () => {
   const [formData, setFormData] = useState({
@@ -13,7 +12,7 @@ export const Signup = () => {
     password: '',
   });
   const [message, setMessage] = useState('');
-  const [ setErrors] = useState({});
+  const [errors, setErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({
     length: false,
     number: false,
@@ -22,7 +21,7 @@ export const Signup = () => {
     specialChar: false,
   });
   const [generalError, setGeneralError] = useState('');
-  const { signup } = useAuth(); // AuthContext from here
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -70,21 +69,19 @@ export const Signup = () => {
     }
 
     try {
-      // Firebase SDK ile kullanıcı kaydı
-      await signup(formData.email, formData.password);
-      
-      // Oturum açma sonrası Firebase'den token alma
-      const idToken = await auth.currentUser.getIdToken(true);
-
-      // Backend'de kullanıcı oluşturma
-      await axios.post('http://localhost:3001/auth/signup', {
+      // Backend API'ye istek gönder
+      const response = await axios.post('http://localhost:3001/auth/signup', {
         email: formData.email,
         password: formData.password,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        idToken,
       });
 
+      // Başarılı signup sonrası kullanıcının verisini ve token'ı sakla
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      signup(user);
+      
       setMessage('Kayıt başarılı. Lütfen emailinizi kontrol edin.');
       setTimeout(() => navigate('/login'), 3000);
     } catch (error) {
