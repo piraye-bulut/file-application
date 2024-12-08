@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import axios from 'axios';
+//import { useAuth } from '../contexts/AuthContext';
+//import axios from 'axios';
 
 export const SendFile = () => {
   const [recipientEmail, setRecipientEmail] = useState('');
   const [file, setFile] = useState(null);
   const [fileBase64, setFileBase64] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const { currentUser } = useAuth();
+  //const { currentUser } = useAuth();
 
   const validateFile = (file) => {
     const validTypes = [
@@ -51,7 +51,7 @@ export const SendFile = () => {
 
     setUploading(true);
 
-    try {
+   /* try {
       const response = await axios.post('http://localhost:3001/files', {
         recipientEmail,
         senderEmail: currentUser.email,
@@ -68,6 +68,7 @@ export const SendFile = () => {
       setFile(null);
       setRecipientEmail('');
     }
+      */
   };
 
   return (

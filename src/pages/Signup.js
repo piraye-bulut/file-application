@@ -12,7 +12,7 @@ export const Signup = () => {
     password: '',
   });
   const [message, setMessage] = useState('');
-  const [errors, setErrors] = useState({});
+  const [ setErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({
     length: false,
     number: false,
