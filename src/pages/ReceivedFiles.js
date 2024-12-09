@@ -12,7 +12,7 @@ export const ReceivedFiles = () => {
       if (!currentUser) return;
 
       try {
-        const response = await axios.get(`https://fileappbackend-production.up.railway.app/files/received?email=${currentUser.email}`);
+        const response = await axios.get(`http://localhost:3001/files/received?email=${currentUser.email}`);
         setFiles(response.data);
       } catch (error) {
         console.error('Dosyalar yüklenirken bir hata oluştu:', error);
