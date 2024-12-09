@@ -12,7 +12,7 @@ export const Signup = () => {
     password: '',
   });
   const [message, setMessage] = useState('');
-  const [errors, setErrors] = useState({});
+  const [ setErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({
     length: false,
     number: false,
@@ -70,7 +70,7 @@ export const Signup = () => {
 
     try {
       // Backend API'ye istek gönder
-      const response = await axios.post('http://localhost:3001/auth/signup', {
+      const response = await axios.post('https://fileappbackend-production.up.railway.app/auth/signup', {
         email: formData.email,
         password: formData.password,
         firstName: formData.firstName,

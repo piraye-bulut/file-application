@@ -52,7 +52,7 @@ export const SendFile = () => {
     setUploading(true);
 
     try {
-      const response = await axios.post('http://localhost:3001/files', {
+      const response = await axios.post('https://fileappbackend-production.up.railway.app/files', {
         recipientEmail,
         senderEmail: currentUser.email,
         fileName: file.name,

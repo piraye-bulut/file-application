@@ -15,7 +15,7 @@ export const LoginPage = () => {
 
     try {
       // Backend API'ye istek gönder
-      const response = await axios.post('http://localhost:3001/auth/login', { email, password });
+      const response = await axios.post('https://fileappbackend-production.up.railway.app//auth/login', { email, password });
 
       // Başarılı login sonrası kullanıcının verisini ve token'ı sakla
       const { token, user } = response.data;
