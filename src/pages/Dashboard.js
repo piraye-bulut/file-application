@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import axios from 'axios';
+//import { useAuth } from '../contexts/AuthContext';
+
 
 export const Dashboard = () => {
-  const { currentUser } = useAuth();
+  //const { currentUser } = useAuth();
 
   return (
     <div className="flex">

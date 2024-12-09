@@ -50,7 +50,6 @@ export const SendFile = () => {
     if (!file || !recipientEmail || !fileBase64) return;
 
     setUploading(true);
-
     try {
       const response = await axios.post('https://fileappbackend-production.up.railway.app/files', {
         recipientEmail,
@@ -68,6 +67,7 @@ export const SendFile = () => {
       setFile(null);
       setRecipientEmail('');
     }
+      
   };
 
   return (
